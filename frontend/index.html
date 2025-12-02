@@ -1,0 +1,330 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Processing Service</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">
+          <i class="fas fa-file-pdf"></i>
+          <h1>PDF Processing Service</h1>
+        </div>
+        <div class="status" id="apiStatus">
+          <span class="status-dot"></span>
+          <span class="status-text">Checking API...</span>
+        </div>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="convert">
+          <i class="fas fa-images"></i>
+          Images to PDF
+        </button>
+        <button class="tab-btn" data-tab="merge">
+          <i class="fas fa-object-group"></i>
+          Merge PDFs
+        </button>
+        <button class="tab-btn" data-tab="compress">
+          <i class="fas fa-compress-alt"></i>
+          Compress PDF
+        </button>
+      </nav>
+
+      <!-- Tab Contents -->
+      <main class="tab-contents">
+        <!-- Convert Images to PDF -->
+        <section class="tab-content active" id="convert">
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-images"></i> Convert Images to PDF</h2>
+              <p>
+                Upload multiple images and convert them into a single PDF
+                document
+              </p>
+            </div>
+
+            <div class="card-body">
+              <!-- Drop Zone -->
+              <div class="drop-zone" id="convertDropZone">
+                <div class="drop-zone-content">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <p>Drag & drop images here</p>
+                  <span>or</span>
+                  <label class="file-input-label">
+                    Browse Files
+                    <input
+                      type="file"
+                      id="convertFiles"
+                      multiple
+                      accept="image/jpeg,image/png,image/webp,image/tiff,image/bmp"
+                    />
+                  </label>
+                  <p class="file-hint">
+                    Supports: JPEG, PNG, WebP, TIFF, BMP (Max 50MB each)
+                  </p>
+                </div>
+              </div>
+
+              <!-- File List -->
+              <div class="file-list" id="convertFileList"></div>
+
+              <!-- Options -->
+              <div class="options-grid">
+                <div class="option-group">
+                  <label for="pageSize">Page Size</label>
+                  <select id="pageSize">
+                    <option value="A4" selected>A4</option>
+                    <option value="A3">A3</option>
+                    <option value="Letter">Letter</option>
+                    <option value="Legal">Legal</option>
+                  </select>
+                </div>
+                <div class="option-group">
+                  <label for="orientation">Orientation</label>
+                  <select id="orientation">
+                    <option value="portrait" selected>Portrait</option>
+                    <option value="landscape">Landscape</option>
+                  </select>
+                </div>
+                <div class="option-group">
+                  <label for="margin">Margin (mm)</label>
+                  <input type="number" id="margin" value="0" min="0" max="50" />
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <button class="btn btn-primary" id="convertBtn" disabled>
+                <i class="fas fa-magic"></i>
+                Convert to PDF
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Merge PDFs -->
+        <section class="tab-content" id="merge">
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-object-group"></i> Merge PDF Files</h2>
+              <p>Combine multiple PDF files into a single document</p>
+            </div>
+
+            <div class="card-body">
+              <!-- Drop Zone -->
+              <div class="drop-zone" id="mergeDropZone">
+                <div class="drop-zone-content">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <p>Drag & drop PDF files here</p>
+                  <span>or</span>
+                  <label class="file-input-label">
+                    Browse Files
+                    <input
+                      type="file"
+                      id="mergeFiles"
+                      multiple
+                      accept="application/pdf"
+                    />
+                  </label>
+                  <p class="file-hint">
+                    Drag to reorder • Max 20 files • 50MB each
+                  </p>
+                </div>
+              </div>
+
+              <!-- Sortable File List -->
+              <div class="file-list sortable" id="mergeFileList"></div>
+
+              <!-- Options -->
+              <div class="options-grid">
+                <div class="option-group">
+                  <label for="outputFilename">Output Filename</label>
+                  <input
+                    type="text"
+                    id="outputFilename"
+                    value="merged.pdf"
+                    placeholder="merged.pdf"
+                  />
+                </div>
+                <div class="option-group checkbox-group">
+                  <label>
+                    <input type="checkbox" id="addBookmarks" checked />
+                    <span>Add bookmarks for each document</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <button class="btn btn-primary" id="mergeBtn" disabled>
+                <i class="fas fa-compress-arrows-alt"></i>
+                Merge PDFs
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Compress PDF -->
+        <section class="tab-content" id="compress">
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fas fa-compress-alt"></i> Compress PDF</h2>
+              <p>Reduce the file size of your PDF document</p>
+            </div>
+
+            <div class="card-body">
+              <!-- Drop Zone -->
+              <div class="drop-zone" id="compressDropZone">
+                <div class="drop-zone-content">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  <p>Drag & drop a PDF file here</p>
+                  <span>or</span>
+                  <label class="file-input-label">
+                    Browse File
+                    <input
+                      type="file"
+                      id="compressFile"
+                      accept="application/pdf"
+                    />
+                  </label>
+                  <p class="file-hint">Max file size: 50MB</p>
+                </div>
+              </div>
+
+              <!-- File Info -->
+              <div class="file-info" id="compressFileInfo"></div>
+
+              <!-- Compression Level -->
+              <div class="compression-levels">
+                <label>Compression Level</label>
+                <div class="level-options">
+                  <label class="level-option">
+                    <input type="radio" name="compressionLevel" value="low" />
+                    <div class="level-card">
+                      <i class="fas fa-feather"></i>
+                      <strong>Low</strong>
+                      <span>~90% quality</span>
+                      <span class="level-desc">Minimal compression</span>
+                    </div>
+                  </label>
+                  <label class="level-option">
+                    <input
+                      type="radio"
+                      name="compressionLevel"
+                      value="medium"
+                      checked
+                    />
+                    <div class="level-card">
+                      <i class="fas fa-balance-scale"></i>
+                      <strong>Medium</strong>
+                      <span>~75% quality</span>
+                      <span class="level-desc">Recommended</span>
+                    </div>
+                  </label>
+                  <label class="level-option">
+                    <input type="radio" name="compressionLevel" value="high" />
+                    <div class="level-card">
+                      <i class="fas fa-compress"></i>
+                      <strong>High</strong>
+                      <span>~60% quality</span>
+                      <span class="level-desc">Significant reduction</span>
+                    </div>
+                  </label>
+                  <label class="level-option">
+                    <input
+                      type="radio"
+                      name="compressionLevel"
+                      value="maximum"
+                    />
+                    <div class="level-card">
+                      <i class="fas fa-minimize"></i>
+                      <strong>Maximum</strong>
+                      <span>~40% quality</span>
+                      <span class="level-desc">Smallest size</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Additional Options -->
+              <div class="options-grid">
+                <div class="option-group checkbox-group">
+                  <label>
+                    <input type="checkbox" id="removeMetadata" />
+                    <span>Remove metadata</span>
+                  </label>
+                </div>
+                <div class="option-group checkbox-group">
+                  <label>
+                    <input type="checkbox" id="linearize" checked />
+                    <span>Optimize for web viewing</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <button class="btn btn-primary" id="compressBtn" disabled>
+                <i class="fas fa-compress-alt"></i>
+                Compress PDF
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Progress Modal -->
+      <div class="modal" id="progressModal">
+        <div class="modal-content">
+          <div class="progress-container">
+            <div class="spinner"></div>
+            <h3 id="progressTitle">Processing...</h3>
+            <p id="progressText">Please wait while we process your files</p>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Modal -->
+      <div class="modal" id="resultModal">
+        <div class="modal-content result-modal">
+          <div class="result-icon" id="resultIcon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h3 id="resultTitle">Success!</h3>
+          <div class="result-details" id="resultDetails"></div>
+          <div class="result-actions">
+            <button class="btn btn-primary" id="downloadBtn">
+              <i class="fas fa-download"></i>
+              Download
+            </button>
+            <button class="btn btn-secondary" id="closeResultBtn">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Container -->
+      <div class="toast-container" id="toastContainer"></div>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>PDF Processing Service v1.0.0</p>
+        <a href="/docs" target="_blank">
+          <i class="fas fa-book"></i> API Documentation
+        </a>
+      </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+  </body>
+</html>

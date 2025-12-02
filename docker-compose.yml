@@ -1,0 +1,38 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  pdf-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pdf-service
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=PDF Processing Service
+      - APP_VERSION=1.0.0
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - MAX_FILE_SIZE_MB=50
+      - MAX_FILES_COUNT=20
+      - TEMP_DIR=/tmp/pdf-service
+      - RATE_LIMIT_PER_MINUTE=30
+    volumes:
+      - pdf-temp:/tmp/pdf-service
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  pdf-temp:
