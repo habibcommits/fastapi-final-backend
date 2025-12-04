@@ -78,6 +78,13 @@ async def convert_images_to_pdf(
         # Schedule cleanup
         background_tasks.add_task(file_handler.cleanup_files, temp_files)
 
+        # Generate output filename based on first file
+        if len(files) == 1 and files[0].filename:
+            base_name = Path(files[0].filename).stem
+            output_filename = f"{base_name}_converted.pdf"
+        else:
+            output_filename = "images_converted.pdf"
+
         # Return the PDF
         def iterfile():
             with open(output_path, 'rb') as f:
@@ -89,7 +96,7 @@ async def convert_images_to_pdf(
             iterfile(),
             media_type="application/pdf",
             headers={
-                "Content-Disposition": "attachment; filename=converted.pdf",
+                "Content-Disposition": f"attachment; filename={output_filename}",
                 "X-Processing-Time-Ms": str(round(processing_time, 2)),
                 "X-Pages-Count": str(pages_count),
             }

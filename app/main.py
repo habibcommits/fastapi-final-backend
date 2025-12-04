@@ -98,6 +98,16 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=[
+        "Content-Disposition",
+        "X-Processing-Time-Ms",
+        "X-Original-Size",
+        "X-Compressed-Size",
+        "X-Compression-Ratio",
+        "X-Pages-Count",
+        "X-Total-Pages",
+        "X-Files-Merged",
+    ],
 )
 
 # Add logging middleware

@@ -8,7 +8,6 @@ import structlog
 from app.config import get_settings
 from app.services.pdf_compressor import pdf_compressor_service
 from app.utils.file_handler import file_handler
-from app.schemas.responses import CompressionLevel
 
 router = APIRouter()
 settings = get_settings()
@@ -24,30 +23,18 @@ logger = structlog.get_logger()
 async def compress_pdf(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(..., description="PDF file to compress"),
-    level: CompressionLevel = Form(
-        default=CompressionLevel.MEDIUM,
-        description="Compression level: low, medium, high, maximum"
+    image_quality: int = Form(
+        default=75,
+        ge=10,
+        le=100,
+        description="JPEG quality for images (10-100). Lower = more compression"
     ),
-    remove_metadata: bool = Form(
-        default=False,
-        description="Remove document metadata"
-    ),
-    linearize: bool = Form(
-        default=True,
-        description="Optimize for web viewing"
-    )
 ):
     """
     Compress a PDF file.
 
     - **file**: PDF file to compress
-    - **level**: Compression intensity
-        - low: ~90% quality, minimal compression
-        - medium: ~75% quality, balanced
-        - high: ~60% quality, significant compression
-        - maximum: ~40% quality, maximum compression
-    - **remove_metadata**: Strip metadata from PDF
-    - **linearize**: Optimize for progressive web loading
+    - **image_quality**: JPEG quality (10-100). Lower = smaller file, more compression
     """
     start_time = time.time()
     input_path: Path = None
@@ -73,9 +60,7 @@ async def compress_pdf(
         original_size, compressed_size, pages_count = await pdf_compressor_service.compress(
             input_path=input_path,
             output_path=output_path,
-            level=level,
-            remove_metadata=remove_metadata,
-            linearize=linearize
+            image_quality=image_quality,
         )
 
         processing_time = (time.time() - start_time) * 1000

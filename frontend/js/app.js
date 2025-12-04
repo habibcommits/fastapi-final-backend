@@ -1,7 +1,8 @@
 // frontend/js/app.js
 
 // ===== Configuration =====
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL =
+  "https://muzammil-fastapi-vscode-final-hjhffmdgfhgjcrf6.canadacentral-01.azurewebsites.net";
 
 // ===== State Management =====
 const state = {

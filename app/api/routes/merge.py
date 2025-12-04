@@ -75,6 +75,11 @@ async def merge_pdfs(
         # Schedule cleanup
         background_tasks.add_task(file_handler.cleanup_files, temp_files)
 
+        # Generate filename based on first file if default is used
+        if output_filename == "merged.pdf" and files[0].filename:
+            base_name = Path(files[0].filename).stem
+            output_filename = f"{base_name}_merged.pdf"
+
         # Sanitize filename
         safe_filename = "".join(
             c for c in output_filename
